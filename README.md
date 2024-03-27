@@ -3,8 +3,7 @@ CountryCode
 
 Note
 ----
-
-This repository is deprecated and replaced by [nv-i18n](https://github.com/TakahikoKawasaki/nv-i18n).
+This repository is an improved version of [TakahikoKawasaki/CountryCode](https://github.com/TakahikoKawasaki/CountryCode). However, that repository is acknowledged to be deprecated and replaced by its original author and moved to [nv-i18n](https://github.com/TakahikoKawasaki/nv-i18n).
 See https://github.com/TakahikoKawasaki/nv-i18n
 
 Overview
