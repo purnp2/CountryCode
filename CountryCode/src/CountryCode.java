@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Neo Visionaries Inc.
+ * Original Source: https://github.com/TakahikoKawasaki/CountryCode
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,25 +25,25 @@ import java.util.Map;
  * country code.
  *
  * <p>
- * Enum names of this enum themselves are represented by
- * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>
- * codes. There are instance methods to get the country name ({@link #getName()}), the
- * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3" >ISO 3166-1 alpha-3</a>
- * code ({@link #getAlpha3()}) and the
- * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric</a>
- * code ({@link #getNumeric()}).
- * In addition, there are static methods to get a CountryCode instance that
- * corresponds to a given alpha-2/alpha-3/numeric code ({@link #getByCode(String)},
- * {@link #getByCode(int)}).
+     * Enum names of this enum themselves are represented by
+     * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2</a>
+     * codes. There are instance methods to get the country name ({@link #getFullName()}), the
+     * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3" >ISO 3166-1 alpha-3</a>
+     * code ({@link #getAlpha3()}) and the
+     * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric</a>
+     * code ({@link #getNumeric()}).
+     * In addition, there are static methods to get a CountryCode instance that
+     * corresponds to a given alpha-2/alpha-3/numeric code ({@link #getByAlpha2Code(String)},
+     * {@link #getByNumericCode(int)}).
  * </p>
  *
  * <pre style="background-color: #EEEEEE; margin-left: 2em; margin-right: 2em; border: 1px solid black;">
  * <span style="color: darkgreen;">// EXAMPLE</span>
  *
- * CountryCode cc = CountryCode.{@link #getByCode(String) getByCode}("JP");
+ * CountryCode cc = CountryCode.{@link #getByAlpha2Code(String) getByCode}("JP");
  *
  * <span style="color: darkgreen;">// Country name</span>
- * System.out.println("Country name = " + cc.{@link #getName()});                  <span style="color: darkgreen;">// "Japan"</span>
+ * System.out.println("Country name = " + cc.{@link #getFullName()});                  <span style="color: darkgreen;">// "Japan"</span>
  *
  * <span style="color: darkgreen;">// ISO 3166-1 alpha-2 code</span>
  * System.out.println("ISO 3166-1 alpha-2 code = " + cc.{@link #getAlpha2()});     <span style="color: darkgreen;">// "JP"</span>
@@ -56,11 +57,10 @@ import java.util.Map;
  *
  * @author Takahiko Kawasaki
  */
-public enum CountryCode
-{
+public enum CountryCode {
     // @formatter:off
     /** <a href="http://en.wikipedia.org/wiki/Andorra">Andorra</a> */
-    AD("Andorra", "AND", 16),
+    AD("Andorra", "AND", 20),
 
     /** <a href="http://en.wikipedia.org/wiki/United_Arab_Emirates">United Arab Emirates</a> */
     AE("United Arab Emirates", "ARE", 784),
@@ -811,155 +811,118 @@ public enum CountryCode
     ;
     // @formatter:on
 
+    public static final Map<String, CountryCode> alpha3Map = new HashMap<String, CountryCode>();
+    public static final Map<Integer, CountryCode> numericMap = new HashMap<Integer, CountryCode>();
+    public static final Map<String, CountryCode> nameMap = new HashMap<String, CountryCode>();
 
-    private static final Map<String, CountryCode> alpha3Map = new HashMap<String, CountryCode>();
-    private static final Map<Integer, CountryCode> numericMap = new HashMap<Integer, CountryCode>();
 
-
-    static
-    {
-        for (CountryCode cc : values())
-        {
+    static {
+        for (CountryCode cc : values()) {
             alpha3Map.put(cc.getAlpha3(), cc);
             numericMap.put(cc.getNumeric(), cc);
+            nameMap.put(cc.fullName.toLowerCase(), cc);
         }
     }
 
-
-    private final String name;
+    private final String fullName;
     private final String alpha3;
     private final int numeric;
 
 
-    private CountryCode(String name, String alpha3, int numeric)
-    {
-        this.name = name;
+    private CountryCode(String fullName, String alpha3, int numeric) {
+        this.fullName = fullName;
         this.alpha3 = alpha3;
         this.numeric = numeric;
     }
 
-
     /**
-     * Get the country name.
-     *
-     * @return
-     *         The country name.
+     * @return The country full-name.
      */
-    public String getName()
-    {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-
     /**
-     * Get the <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2"
+     * @return The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2"
      * >ISO 3166-1 alpha-2</a> code.
-     *
-     * @return
-     *         The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2"
-     *         >ISO 3166-1 alpha-2</a> code.
+     * Returns the name of this enum constant, exactly as declared in its enum declaration.
      */
-    public String getAlpha2()
-    {
-        return name();
+    public String getAlpha2() {
+        // uses default method of enum
+        return name().toString();
     }
 
-
     /**
-     * Get the <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3"
+     * @return The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3"
      * >ISO 3166-1 alpha-3</a> code.
-     *
-     * @return
-     *         The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3"
-     *         >ISO 3166-1 alpha-3</a> code.
      */
-    public String getAlpha3()
-    {
+    public String getAlpha3() {
         return alpha3;
     }
 
 
     /**
-     * Get the <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric"
+     * @return The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric"
      * >ISO 3166-1 numeric</a> code.
-     *
-     * @return
-     *         The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric"
-     *         >ISO 3166-1 numeric</a> code.
      */
-    public int getNumeric()
-    {
+    public int getNumeric() {
         return numeric;
     }
-
 
     /**
      * Get a CountryCode that corresponds to a given ISO 3166-1
      * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">alpha-2</a> or
      * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">alpha-3</a> code.
      *
-     * @param code
-     *         An ISO 3166-1 <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2"
-     *         >alpha-2</a> or <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3"
-     *         >alpha-3</a> code.
-     *
-     * @return
-     *         A CountryCode instance, or null if not found.
+     * @param alpha2Or3code An ISO 3166-1 <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">alpha-2</a>
+     *                      OR
+     *                      <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">alpha-3</a> code.
+     * @return A CountryCode instance, or null if not found.
      */
-    public static CountryCode getByCode(String code)
-    {
-        if (code == null)
-        {
+    public static CountryCode getByNumericCode(String alpha2Or3code) {
+        if (alpha2Or3code == null) {
             return null;
         }
 
-        switch (code.length())
-        {
+        switch (alpha2Or3code.length()) {
             case 2:
-                return getByAlpha2Code(code);
+                return getByAlpha2Code(alpha2Or3code);
 
             case 3:
-                return getByAlpha3Code(code);
+                return getByAlpha3Code(alpha2Or3code);
 
             default:
                 return null;
         }
     }
 
-
-    private static CountryCode getByAlpha2Code(String code)
-    {
-        try
-        {
-            return Enum.valueOf(CountryCode.class, code);
+    public static CountryCode getByCountryName(String countryName) {
+        if (countryName == null) {
+            return null;
         }
-        catch (IllegalArgumentException e)
-        {
+        return nameMap.get(countryName.toLowerCase());
+    }
+
+    private static CountryCode getByAlpha2Code(String code) {
+        try {
+            return Enum.valueOf(CountryCode.class, code);
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
 
-
-    private static CountryCode getByAlpha3Code(String code)
-    {
+    private static CountryCode getByAlpha3Code(String code) {
         return alpha3Map.get(code);
     }
 
-
     /**
      * Get a CountryCode that corresponds to a given
-     * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1
-     * numeric</a> code.
+     * <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric</a> code.
      *
-     * @param code
-     *         An <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric"
-     *         >ISO 3166-1 numeric</a> code.
-     *
-     * @return
-     *         A CountryCode instance, or null if not found.
+     * @param numericCode An <a href="http://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric</a> code.
+     * @return A CountryCode instance, or null if not found.
      */
-    public static CountryCode getByCode(int code)
-    {
-        return numericMap.get(code);
+    public static CountryCode getByNumericCode(int numericCode) {
+        return numericMap.get(numericCode);
     }
 }
